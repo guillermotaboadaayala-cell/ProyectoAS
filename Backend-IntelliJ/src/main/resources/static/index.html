@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Sazón | Sistema de Gestión (Spring Boot + Hibernate)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --rojo-principal: #c80808;
+            --rojo-oscuro: #960000;
+            --naranja-asterisco: #e65100;
+            --negro-boton: #1d1d1d;
+        }
+        body {
+            background: radial-gradient(circle at center, #d90b0b 0%, #a30000 70%, #7a0000 100%);
+            color: #ffffff;
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .titulo-chunky {
+            font-family: 'Rubik Mono One', Impact, 'Arial Black', sans-serif;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.08;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+        .etiqueta-serif {
+            font-family: 'Playfair Display', Georgia, serif;
+            text-transform: uppercase;
+            font-size: 1.15rem;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        .input-alsazon {
+            background: rgba(0, 0, 0, 0.22) !important;
+            border: none !important;
+            border-bottom: 2px solid #ffffff !important;
+            border-radius: 6px 6px 0 0 !important;
+            color: #ffffff !important;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.08rem;
+            padding: 8px 12px;
+        }
+        .input-alsazon:focus {
+            background: rgba(0, 0, 0, 0.38) !important;
+            box-shadow: none !important;
+            border-bottom-color: #ffcc80 !important;
+        }
+        .input-alsazon option {
+            background: #960000;
+            color: #fff;
+        }
+        .input-alsazon::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        .btn-pildora-negro {
+            background: linear-gradient(145deg, #2b2b2b, #141414);
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 32px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+        .btn-pildora-negro:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.6);
+            color: #fff;
+        }
+        .flecha-roja {
+            color: #e51c23;
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .marco-foto {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .foto-tacos {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+            border: 2px solid rgba(255,255,255,0.18);
+        }
+        .asterisco-naranja {
+            position: absolute;
+            color: var(--naranja-asterisco);
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: 8.5rem;
+            line-height: 0.7;
+            user-select: none;
+            pointer-events: none;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+        .barra-inicio-top {
+            background: rgba(0, 0, 0, 0.28);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding: 12px 28px;
+        }
+        .link-menu-rojo {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.45rem;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 30px;
+            transition: background 0.2s, transform 0.15s;
+            text-align: left;
+        }
+        .link-menu-rojo:hover {
+            background: #1d1d1d;
+            color: #ffcc80;
+            transform: translateX(6px);
+        }
+        .panel-cristal-rojo {
+            background: rgba(0, 0, 0, 0.24);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+        .tabla-roja {
+            color: #fff !important;
+        }
+        .tabla-roja th {
+            background: rgba(0,0,0,0.45) !important;
+            color: #fff !important;
+            border-color: rgba(255,255,255,0.2) !important;
+            text-transform: uppercase;
+        }
+        .tabla-roja td {
+            background: rgba(0,0,0,0.18) !important;
+            color: #fff !important;
+            border-color: rgba(255,255,255,0.15) !important;
+        }
+        .icono-svg-blanco {
+            width: 34px;
+            height: 34px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .icono-svg-blanco:hover {
+            transform: scale(1.12);
+            stroke: #ffcc80;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== PANTALLA 1: INICIO DE SESION ==================== -->
+<div id="pantallaLogin" class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="row w-100 align-items-center g-5 py-4">
+        <div class="col-md-6">
+            <h1 class="titulo-chunky display-4 mb-4">INICIO DE<br>SESION</h1>
+
+            <div class="mb-4">
+                <label class="etiqueta-serif mb-1">NOMBRE DE USUARIO:</label>
+                <input type="text" id="usuarioLoginInput" class="form-control input-alsazon" autocomplete="off">
+            </div>
+
+            <div class="mb-4">
+                <label class="etiqueta-serif mb-1">CONTRASEÑA:</label>
+                <input type="password" id="pinInput" class="form-control input-alsazon" autocomplete="off" onkeydown="if(event.key==='Enter') iniciarSesion()">
+            </div>
+
+            <button onclick="iniciarSesion()" class="btn-pildora-negro mt-2">
+                <span>ENTRAR</span>
+                <span class="flecha-roja">&rarr;</span>
+            </button>
+
+            <div id="errorLogin" class="mt-3 fw-bold" style="color: #ffe082; font-size: 1.05rem;"></div>
+        </div>
+
+        <div class="col-md-6 text-center">
+            <div class="marco-foto">
+                <span class="asterisco-naranja" style="bottom: 10px; left: -25px;">*</span>
+                <img src="img/Alsason2.jfif" onerror="this.src='https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&q=80'" class="foto-tacos" alt="Carnitas Al Sazón">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PANTALLA 2: SISTEMA PRINCIPAL ==================== -->
+<div id="pantallaSistema" class="d-none">
+
+    <!-- Barra Superior Limpia: Izquierda "AL SASON" + Casita + Engrane | Derecha "SALIR" -->
+    <div class="barra-inicio-top sticky-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <span class="titulo-chunky fs-2" style="cursor:pointer;" onclick="cambiarModulo('modInicio')" title="Volver al Menú de Inicio">AL SASON</span>
+                <!-- Icono Casita -->
+                <svg class="icono-svg-blanco" onclick="cambiarModulo('modInicio')" viewBox="0 0 24 24" title="Volver al Menú de Inicio">
+                    <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-10.5z"/>
+                </svg>
+                <!-- Icono Engrane -->
+                <svg class="icono-svg-blanco" onclick="cambiarModulo('modCortes')" viewBox="0 0 24 24" title="Ir a Cortes y Ajustes">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </div>
+
+            <button onclick="cerrarSesion()" class="btn-pildora-negro py-2 px-4" style="font-size:1rem;">
+                <span>SALIR</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <div id="alertaGlobal" class="mb-3"></div>
+
+        <!-- ==================== VISTA 0: PANTALLA MENU INICIO ==================== -->
+        <div id="modInicio" class="modulo-vista">
+            <div class="row align-items-center g-4">
+                <div class="col-md-5 position-relative">
+                    <h1 class="titulo-chunky display-4 mb-4">INICIO</h1>
+                    <div class="d-flex flex-column align-items-start gap-2">
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modInventario')">INVENTARIO</button>
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modRegistroProd')">REGISTRO PRODUCTOS</button>
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modVentas')">VENTAS</button>
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modGastos')">GASTOS</button>
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modCortes')">CORTES</button>
+                        <button class="link-menu-rojo" onclick="cambiarModulo('modReportes')">REPORTES</button>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="row g-3 position-relative">
+                        <span class="asterisco-naranja" style="top: 35%; right: 38%;">*</span>
+                        <div class="col-6">
+                            <img src="img/Alsason1.jfif" onerror="this.src='https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&q=80'" class="foto-tacos" style="height:220px;" alt="Tacos 1">
+                        </div>
+                        <div class="col-6">
+                            <img src="img/Alsason3.jfif" onerror="this.src='https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600&q=80'" class="foto-tacos" style="height:220px;" alt="Tacos 2">
+                        </div>
+                        <div class="col-6">
+                            <img src="img/Alsason4.jfif" onerror="this.src='https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80'" class="foto-tacos" style="height:220px;" alt="Tacos 3">
+                        </div>
+                        <div class="col-6">
+                            <img src="img/Alsason2.jfif" onerror="this.src='https://images.unsplash.com/photo-1613514785940-daed07799d9b?w=600&q=80'" class="foto-tacos" style="height:220px;" alt="Tacos 4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 1: INVENTARIO Y REFRESCOS ==================== -->
+        <div id="modInventario" class="modulo-vista d-none">
+            <div class="row g-4">
+                <div class="col-md-7">
+                    <h1 class="titulo-chunky display-5 mb-3">REFRESCOS E INVENTARIO</h1>
+                    <div id="resumenRefrescosLook" class="panel-cristal-rojo mb-4"></div>
+
+                    <h4 class="etiqueta-serif mb-3">LOTES ACTIVOS Y BARRAS DE CADUCIDAD:</h4>
+                    <div id="listaLotes" class="row g-3"></div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="panel-cristal-rojo mb-4">
+                        <h4 class="titulo-chunky fs-4 mb-3">CONSUMO MANUAL / MERMA</h4>
+                        <p class="small">Descuenta kilos de carne ("mano del gato") o unidades consumidas. Si el lote llega a 0, se elimina automáticamente:</p>
+                        <div class="mb-3">
+                            <label class="etiqueta-serif fs-6">ID DE LOTE A DESCONTAR:</label>
+                            <input type="number" id="idLoteDescuento" class="form-control input-alsazon" min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label class="etiqueta-serif fs-6">CANTIDAD A RESTAR (KG / PZS):</label>
+                            <input type="number" id="cantDescuento" class="form-control input-alsazon" step="0.5" min="0.1">
+                        </div>
+                        <button onclick="descontarManual()" class="btn-pildora-negro w-100">
+                            <span>DESCONTAR DEL LOTE</span>
+                            <span class="flecha-roja">&rarr;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 2: REGISTRA TU PRODUCTO ==================== -->
+        <div id="modRegistroProd" class="modulo-vista d-none">
+            <div class="row align-items-center g-4">
+                <div class="col-md-6">
+                    <h1 class="titulo-chunky display-5 mb-4">REGISTRA TU<br>PRODUCTO</h1>
+
+                    <div class="mb-3">
+                        <label class="etiqueta-serif">NOMBRE:</label>
+                        <input type="text" id="regProdNombre" class="form-control input-alsazon" placeholder="Ej. Del Valle Guayaba o Costilla">
+                    </div>
+                    <div class="mb-3">
+                        <label class="etiqueta-serif">CANTIDAD MOMENTARIA (LOTE INICIAL):</label>
+                        <input type="number" id="regProdCantidad" class="form-control input-alsazon" min="1" step="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="etiqueta-serif">CATEGORIA:</label>
+                        <select id="regProdCategoria" class="form-select input-alsazon">
+                            <option value="Carne">CARNE / TACOS</option>
+                            <option value="Refresco">REFRESCO (APLICA FIFO)</option>
+                            <option value="Insumo">INSUMO / MANTECA</option>
+                        </select>
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-4">
+                            <label class="etiqueta-serif fs-6">PRECIO VENTA ($):</label>
+                            <input type="number" id="regProdPrecio" class="form-control input-alsazon" min="1">
+                        </div>
+                        <div class="col-4">
+                            <label class="etiqueta-serif fs-6">COSTO LOTE ($):</label>
+                            <input type="number" id="regProdCosto" class="form-control input-alsazon" min="0">
+                        </div>
+                        <div class="col-4">
+                            <label class="etiqueta-serif fs-6">CADUCIDAD:</label>
+                            <input type="date" id="regProdCaducidad" class="form-control input-alsazon">
+                        </div>
+                    </div>
+
+                    <button onclick="registrarProductoNuevo()" class="btn-pildora-negro">
+                        <span>GUARDAR PRODUCTO Y LOTE</span>
+                        <span class="flecha-roja">&rarr;</span>
+                    </button>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row g-3 position-relative">
+                        <span class="asterisco-naranja" style="top: 20%; left: 42%;">*</span>
+                        <div class="col-6">
+                            <img src="img/Alsason3.jfif" onerror="this.src='https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600&q=80'" class="foto-tacos" alt="Tacos Platos">
+                        </div>
+                        <div class="col-6">
+                            <img src="img/Alsason1.jfif" onerror="this.src='https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&q=80'" class="foto-tacos" alt="Tacos Carnitas">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 3: VENTAS DIARIAS ==================== -->
+        <div id="modVentas" class="modulo-vista d-none">
+            <div class="row g-4 align-items-start">
+                <div class="col-md-4 text-center">
+                    <div class="marco-foto">
+                        <span class="asterisco-naranja" style="bottom: -15px; right: -10px;">*</span>
+                        <img src="img/Alsason4.jfif" onerror="this.src='https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&q=80'" class="foto-tacos" alt="Ventas Diarias">
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <h1 class="titulo-chunky display-5 mb-3">VENTAS<br>DIARIAS</h1>
+
+                    <div class="panel-cristal-rojo mb-4">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-7">
+                                <label class="etiqueta-serif fs-6">PLATILLO / REFRESCO / KILOS / MANTECA:</label>
+                                <select id="ventaProd" class="form-select input-alsazon"></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="etiqueta-serif fs-6">CANTIDAD:</label>
+                                <input type="number" id="ventaCant" class="form-control input-alsazon" placeholder="Ej. 2" min="0.25" step="0.25">
+                            </div>
+                            <div class="col-md-2">
+                                <button onclick="agregarAlTicket()" class="btn-pildora-negro w-100 py-2 px-2" title="Agregar a la orden">+</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top border-light">
+                            <h5 class="etiqueta-serif">ORDEN ACTUAL:</h5>
+                            <ul id="listaTicket" class="list-group list-group-flush mb-3"></ul>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <h3 class="etiqueta-serif mb-0">TOTAL DEL DIA / ORDEN: $<span id="totalTicket">0.00</span></h3>
+                                <button onclick="confirmarVenta()" class="btn-pildora-negro">
+                                    <span>CONFIRMAR VENTA</span>
+                                    <span class="flecha-roja">&rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-cristal-rojo">
+                        <h4 class="etiqueta-serif mb-3">HISTORIAL Y BUSCADOR DE VENTAS:</h4>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <input type="text" id="filtroTexto" oninput="filtrarTablaVentas()" class="form-control input-alsazon" placeholder="Buscar por ID o producto...">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="date" id="filtroFecha" onchange="filtrarTablaVentas()" class="form-control input-alsazon">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table tabla-roja table-sm align-middle">
+                                <thead>
+                                    <tr><th>ID</th><th>FECHA</th><th>DETALLE VENDIDO</th><th>TOTAL</th><th>EDITAR</th></tr>
+                                </thead>
+                                <tbody id="tablaVentasBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 4: GASTOS ==================== -->
+        <div id="modGastos" class="modulo-vista d-none">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-5 text-center">
+                    <div class="marco-foto">
+                        <span class="asterisco-naranja" style="bottom: -15px; right: -10px;">*</span>
+                        <img src="img/Alsason4.jfif" onerror="this.src='https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&q=80'" class="foto-tacos" alt="Gastos Al Sazón">
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <h1 class="titulo-chunky display-4 mb-4">GASTOS</h1>
+                    <div class="panel-cristal-rojo">
+                        <div class="mb-3">
+                            <label class="etiqueta-serif">CATEGORIA / PRODUCTO QUE INGRESA A LOTE:</label>
+                            <select id="gastoProd" class="form-select input-alsazon"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="etiqueta-serif">NOMBRE / CONCEPTO DEL PROVEEDOR:</label>
+                            <input type="text" id="gastoConcepto" class="form-control input-alsazon" placeholder="Ej. Compra de carne o cajas de refresco">
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="etiqueta-serif fs-6">CANTIDAD DEL LOTE:</label>
+                                <input type="number" id="gastoCant" class="form-control input-alsazon" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="etiqueta-serif fs-6">MONTO / COSTO ($):</label>
+                                <input type="number" id="gastoCosto" class="form-control input-alsazon" min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="etiqueta-serif fs-6">CADUCIDAD LOTE:</label>
+                                <input type="date" id="gastoCaducidad" class="form-control input-alsazon">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
+                            <h4 class="etiqueta-serif mb-0">TOTAL ACUMULADO GASTOS: $<span id="finGastosVista">0.00</span></h4>
+                            <button onclick="registrarGastoConLote()" class="btn-pildora-negro">
+                                <span>REGISTRAR GASTO Y LOTE</span>
+                                <span class="flecha-roja">&rarr;</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 5: CORTES Y RETIRO DE GANANCIAS/SUELDOS ==================== -->
+        <div id="modCortes" class="modulo-vista d-none">
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <h1 class="titulo-chunky display-4 mb-3">CORTES</h1>
+                    <div class="marco-foto mb-3">
+                        <span class="asterisco-naranja" style="bottom: -15px; left: -15px;">*</span>
+                        <img src="img/Alsason3.jfif" onerror="this.src='https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=800&q=80'" class="foto-tacos" style="height:230px;" alt="Cortes Al Sazón">
+                    </div>
+
+                    <div class="panel-cristal-rojo">
+                        <h4 class="titulo-chunky fs-5 mb-2">RETIRAR DINERO DE CAJA (GANANCIAS / SUELDOS)</h4>
+                        <p class="small mb-2">Permite descontar efectivo de la caja cuando el dueño retira sus ganancias o paga sueldos:</p>
+                        <div class="mb-2">
+                            <label class="etiqueta-serif fs-6">MONTO A QUITAR DE CAJA ($):</label>
+                            <input type="number" id="retiroCajaMonto" class="form-control input-alsazon" min="1" placeholder="0.00">
+                        </div>
+                        <div class="mb-3">
+                            <label class="etiqueta-serif fs-6">CONCEPTO DEL RETIRO:</label>
+                            <select id="retiroCajaMotivo" class="form-select input-alsazon">
+                                <option value="Retiro de Ganancias del Dueño">RETIRO DE GANANCIAS DEL DUEÑO</option>
+                                <option value="Pago de Sueldos al Personal">PAGO DE SUELDOS AL PERSONAL</option>
+                                <option value="Gasto Personal / Operativo en Efectivo">OTRO RETIRO AUTORIZADO</option>
+                            </select>
+                        </div>
+                        <button onclick="ejecutarRetiroCaja()" class="btn-pildora-negro w-100 py-2">
+                            <span>RETIRAR EFECTIVO DE CAJA</span>
+                            <span class="flecha-roja">&rarr;</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="panel-cristal-rojo mb-3">
+                        <h4 class="titulo-chunky fs-5 mb-3">COMPARATIVA DE INGRESOS VS GASTADO</h4>
+                        <p class="etiqueta-serif fs-5 mb-2">TOTAL DE VENTAS SEMANALMENTE (INGRESOS): <strong class="text-warning">$<span id="corteVentasSem">0.00</span></strong></p>
+                        <p class="etiqueta-serif fs-5 mb-2">TOTAL DE GASTOS EN INSUMOS (LOTES): <strong style="color:#ffccbc;">$<span id="corteGastosSem">0.00</span></strong></p>
+                        <p class="etiqueta-serif fs-5 mb-2">RETIROS DE CAJA (GANANCIAS DUEÑO / SUELDOS): <strong style="color:#ffccbc;">$<span id="corteRetirosSem">0.00</span></strong></p>
+                        <hr class="border-light">
+                        <p class="etiqueta-serif fs-5 mb-2">DIFERENCIA (INGRESOS EN COMPARACIÓN CON LO GASTADO): <strong class="text-warning">$<span id="corteDiferencia">0.00</span></strong></p>
+                        <p class="etiqueta-serif fs-5 mb-2">PRESUPUESTO / SALDO ESPERADO EN CAJA: <strong class="text-info">$<span id="finPresupuestoActual">0.00</span></strong></p>
+                        <h4 class="etiqueta-serif fw-bold mt-3" id="leyendaPorcentajeGanancia">TUS RESULTADOS INDICAN QUE EXISTE UNA GANANCIA DE 0%</h4>
+                    </div>
+
+                    <div class="panel-cristal-rojo">
+                        <h5 class="titulo-chunky fs-5 mb-3">EJECUTAR CIERRE DE CAJA (CORTE X / Z)</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-7">
+                                <label class="etiqueta-serif fs-6">EFECTIVO FÍSICO CONTADO EN CAJA ($):</label>
+                                <input type="number" id="efectivoCajaInput" class="form-control input-alsazon" min="0" placeholder="0.00">
+                            </div>
+                            <div class="col-md-5">
+                                <button onclick="ejecutarCorteXZ()" class="btn-pildora-negro w-100 py-2">
+                                    <span>HACER CORTE</span>
+                                    <span class="flecha-roja">&rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="resultadoCorteBox" class="mt-3"></div>
+
+                        <div class="row g-2 align-items-end mt-3 pt-3 border-top border-light">
+                            <div class="col-md-7">
+                                <label class="small text-uppercase">Modificar Fondo / Presupuesto Base ($):</label>
+                                <input type="number" id="inputBasePresupuesto" class="form-control input-alsazon" min="0" placeholder="Ej. 10000">
+                            </div>
+                            <div class="col-md-5">
+                                <button onclick="ajustarPresupuesto()" class="btn btn-outline-light w-100">Actualizar Base</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== VISTA 6: REPORTES CON GRAFICA UNICA (VERDE Y ROJA) ==================== -->
+        <div id="modReportes" class="modulo-vista d-none">
+            <h1 class="titulo-chunky display-5 mb-4">REPORTE GENERAL</h1>
+            <div class="row g-4">
+                <div class="col-md-7">
+                    <div class="panel-cristal-rojo h-100">
+                        <h4 class="etiqueta-serif mb-3">GRÁFICA COMPARATIVA: VENTAS (VERDE) VS GASTOS (ROJO)</h4>
+                        <div style="background: rgba(255,255,255,0.95); border-radius: 14px; padding: 16px;">
+                            <canvas id="graficaVentasGastos" height="170"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class="panel-cristal-rojo h-100">
+                        <h4 class="etiqueta-serif mb-3">INDICADORES Y BALANCE DE MERMAS</h4>
+                        <p class="fs-5 mb-2">DÍA DE MAYOR CONSUMO: <strong id="repDiaMayor" class="text-warning">-</strong></p>
+                        <p class="fs-5 mb-2">UTILIDAD NETA (VENTAS - GASTOS): <strong id="repUtilidad" class="text-warning">$0.00</strong></p>
+                        <p class="fs-5 mb-3">MERMA EN LOTES CADUCADOS: <strong id="repMerma" class="text-warning">0 unidades/Kg</strong></p>
+
+                        <h5 class="etiqueta-serif mt-4 mb-2">VENTAS ACUMULADAS POR PRODUCTO:</h5>
+                        <div class="table-responsive">
+                            <table class="table tabla-roja table-sm">
+                                <thead><tr><th>PLATILLO / INSUMO</th><th>CANTIDAD</th><th>TOTAL</th></tr></thead>
+                                <tbody id="tablaReporteProd"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let datosGlobales = { productos: [], lotes: [], ventas: [], finanzas: {}, reporte: {} };
+let ticketActual = [];
+let instanciaGrafica = null;
+
+function mostrarMensaje(texto, esError = false) {
+    const colorFondo = esError ? '#1d1d1d' : '#1b5e20';
+    document.getElementById('alertaGlobal').innerHTML = `
+        <div class="p-3 rounded-4 shadow fw-bold text-white d-flex justify-content-between align-items-center" style="background:${colorFondo}; border:2px solid #fff;">
+            <span>${texto}</span>
+            <button onclick="this.parentElement.remove()" class="btn btn-sm btn-light">Cerrar</button>
+        </div>`;
+    setTimeout(() => {
+        const el = document.getElementById('alertaGlobal');
+        if (el) el.innerHTML = '';
+    }, 4500);
+}
+
+async function iniciarSesion() {
+    const pin = document.getElementById('pinInput').value.trim();
+    if (!pin) {
+        document.getElementById('errorLogin').innerText = 'Ingresa la contraseña de administrador.';
+        return;
+    }
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'login', pin: pin })
+    });
+    if (res.ok) {
+        document.getElementById('pinInput').value = '';
+        document.getElementById('usuarioLoginInput').value = '';
+        document.getElementById('errorLogin').innerText = '';
+
+        document.getElementById('pantallaLogin').classList.add('d-none');
+        document.getElementById('pantallaSistema').classList.remove('d-none');
+        cambiarModulo('modInicio');
+        cargarTodo();
+    } else {
+        document.getElementById('pinInput').value = '';
+        document.getElementById('errorLogin').innerText = 'Contraseña incorrecta. Acceso denegado.';
+    }
+}
+
+function cerrarSesion() {
+    document.getElementById('pinInput').value = '';
+    document.getElementById('usuarioLoginInput').value = '';
+    document.getElementById('pantallaSistema').classList.add('d-none');
+    document.getElementById('pantallaLogin').classList.remove('d-none');
+}
+
+function cambiarModulo(idModulo) {
+    document.querySelectorAll('.modulo-vista').forEach(m => m.classList.add('d-none'));
+    document.getElementById(idModulo).classList.remove('d-none');
+    if (idModulo === 'modReportes') {
+        renderGraficaComparativa();
+    }
+}
+
+async function cargarTodo() {
+    const res = await fetch('api/sistema?accion=dashboard');
+    datosGlobales = await res.json();
+    llenarSelectoresProductos();
+    renderInventario();
+    renderVentas();
+    renderFinanzas();
+    renderReporte();
+}
+
+function llenarSelectoresProductos() {
+    const selVenta = document.getElementById('ventaProd');
+    const selGasto = document.getElementById('gastoProd');
+    selVenta.innerHTML = '';
+    selGasto.innerHTML = '';
+    (datosGlobales.productos || []).forEach(p => {
+        selVenta.innerHTML += `<option value="${p.idProducto}" data-nombre="${p.nombre}" data-precio="${p.precio}">${p.nombre} - $${p.precio}</option>`;
+        selGasto.innerHTML += `<option value="${p.idProducto}">${p.tipo.toUpperCase()} - ${p.nombre}</option>`;
+    });
+}
+
+function renderInventario() {
+    const boxRef = document.getElementById('resumenRefrescosLook');
+    const lotesRef = (datosGlobales.lotes || []).filter(l => l.tipoProducto === 'Refresco' && l.cantidadActual > 0);
+    let htmlRef = '';
+    let faltanRefrescos = false;
+    lotesRef.forEach(l => {
+        if ((l.cantidadActual / l.cantidadInicial) <= 0.25) faltanRefrescos = true;
+        htmlRef += `<div class="d-flex justify-content-between fs-4 etiqueta-serif border-bottom border-light py-1">
+            <span>${l.nombreProducto.toUpperCase()} (LOTE #${l.idLote})</span>
+            <span>PZS. ${l.cantidadActual}/${l.cantidadInicial}</span>
+        </div>`;
+    });
+    if (faltanRefrescos) {
+        htmlRef += `<div class="mt-3 fw-bold fs-5 text-warning">⚠️ FALTAN REFRESCOS (STOCK AL 25% O MENOS)</div>`;
+    }
+    boxRef.innerHTML = htmlRef || '<p class="mb-0">Sin lotes de refrescos activos.</p>';
+
+    const cont = document.getElementById('listaLotes');
+    cont.innerHTML = '';
+    (datosGlobales.lotes || []).filter(l => l.cantidadActual > 0).forEach(l => {
+        const porcStock = Math.round((l.cantidadActual / l.cantidadInicial) * 100);
+        const alertaStock = porcStock <= 25;
+        const alertaCad = l.diasParaCaducar <= 7;
+        const porcCaducidad = Math.max(0, Math.min(100, Math.round((l.diasParaCaducar / 15) * 100)));
+
+        let badges = '';
+        if (alertaStock) badges += `<span class="badge bg-warning text-dark me-1">⚠️ Stock al ${porcStock}% (Resurtir)</span>`;
+        if (alertaCad) badges += `<span class="badge bg-dark text-warning border border-warning">⏳ Caduca en ${l.diasParaCaducar} días</span>`;
+
+        cont.innerHTML += `
+        <div class="col-md-6">
+            <div class="panel-cristal-rojo h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="fw-bold text-white mb-1">LOTE #${l.idLote} - ${l.nombreProducto.toUpperCase()}</h6>
+                    <button onclick="editarLotePrompt(${l.idLote}, ${l.cantidadActual}, '${l.fechaCaducidad}', ${l.costoTotal})" class="btn btn-sm btn-dark">✏️</button>
+                </div>
+                <div class="mb-2">${badges}</div>
+                <p class="small mb-1">EXISTENCIA: <b>${l.cantidadActual} / ${l.cantidadInicial}</b> | COSTO: $${l.costoTotal}</p>
+                <div class="progress mb-2" style="height: 15px; background: rgba(0,0,0,0.4);">
+                    <div class="progress-bar ${alertaStock ? 'bg-warning text-dark fw-bold' : 'bg-success'}" style="width:${porcStock}%">${porcStock}%</div>
+                </div>
+                <p class="small mb-1">CADUCIDAD: <b>${l.fechaCaducidad}</b> (${l.diasParaCaducar} días)</p>
+                <div class="progress" style="height: 10px; background: rgba(0,0,0,0.4);">
+                    <div class="progress-bar ${alertaCad ? 'bg-danger' : 'bg-info'}" style="width:${porcCaducidad}%"></div>
+                </div>
+            </div>
+        </div>`;
+    });
+}
+
+async function registrarProductoNuevo() {
+    const nombre = document.getElementById('regProdNombre').value.trim();
+    const cantidad = parseFloat(document.getElementById('regProdCantidad').value);
+    const categoria = document.getElementById('regProdCategoria').value;
+    const precio = parseFloat(document.getElementById('regProdPrecio').value || '50');
+    const costo = parseFloat(document.getElementById('regProdCosto').value || '0');
+    const fechaCaducidad = document.getElementById('regProdCaducidad').value;
+
+    if (!nombre || isNaN(cantidad) || cantidad <= 0 || !fechaCaducidad) {
+        return mostrarMensaje('Completa nombre, cantidad positiva y fecha de caducidad.', true);
+    }
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'registrarProductoYLote', nombre, cantidad, categoria, precio, costo, fechaCaducidad })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    if (res.ok) {
+        document.getElementById('regProdNombre').value = '';
+        document.getElementById('regProdCantidad').value = '';
+        document.getElementById('regProdPrecio').value = '';
+        document.getElementById('regProdCosto').value = '';
+        document.getElementById('regProdCaducidad').value = '';
+        cargarTodo();
+    }
+}
+
+async function descontarManual() {
+    const idLote = parseInt(document.getElementById('idLoteDescuento').value);
+    const cant = parseFloat(document.getElementById('cantDescuento').value);
+    if (!idLote || !cant || cant <= 0) return mostrarMensaje('Ingresa un ID de lote y una cantidad válida mayor a 0', true);
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'descontarLote', idLote: idLote, cantidad: cant })
+    });
+    const data = await res.json();
+    mostrarMensaje(data.mensaje || data.error, !res.ok);
+    if (res.ok) {
+        document.getElementById('idLoteDescuento').value = '';
+        document.getElementById('cantDescuento').value = '';
+        cargarTodo();
+    }
+}
+
+async function editarLotePrompt(idLote, cantActual, fechaCad, costo) {
+    const nuevaCant = parseFloat(prompt('Corregir cantidad actual del lote #' + idLote + ' (si pones 0 se eliminará):', cantActual));
+    if (isNaN(nuevaCant) || nuevaCant < 0) return mostrarMensaje('Cantidad inválida (no se permiten negativos)', true);
+    const nuevaFecha = prompt('Corregir fecha de caducidad (YYYY-MM-DD):', fechaCad);
+    const nuevoCosto = parseFloat(prompt('Corregir costo del lote ($):', costo));
+    if (!nuevaFecha || isNaN(nuevoCosto) || nuevoCosto < 0) return mostrarMensaje('Datos inválidos', true);
+
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'editarLote', idLote, cantidadActual: nuevaCant, fechaCaducidad: nuevaFecha, costoTotal: nuevoCosto })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    cargarTodo();
+}
+
+function agregarAlTicket() {
+    const sel = document.getElementById('ventaProd');
+    const opt = sel.options[sel.selectedIndex];
+    const cant = parseFloat(document.getElementById('ventaCant').value);
+    if (isNaN(cant) || cant <= 0) return mostrarMensaje('Ingresa una cantidad mayor a cero', true);
+    const precio = parseFloat(opt.getAttribute('data-precio'));
+    ticketActual.push({
+        idProducto: parseInt(sel.value),
+        nombre: opt.getAttribute('data-nombre'),
+        cantidadVendida: cant,
+        subtotal: cant * precio
+    });
+    document.getElementById('ventaCant').value = '';
+    actualizarVistaTicket();
+}
+
+function actualizarVistaTicket() {
+    const ul = document.getElementById('listaTicket');
+    ul.innerHTML = '';
+    let total = 0;
+    ticketActual.forEach((item, idx) => {
+        total += item.subtotal;
+        ul.innerHTML += `<li class="list-group-item bg-transparent text-white border-light d-flex justify-content-between align-items-center">
+            <span>${item.cantidadVendida}x ${item.nombre} ($${item.subtotal.toFixed(2)})</span>
+            <button onclick="ticketActual.splice(${idx},1);actualizarVistaTicket()" class="btn btn-sm btn-dark">Quitar</button>
+        </li>`;
+    });
+    document.getElementById('totalTicket').innerText = total.toFixed(2);
+}
+
+async function confirmarVenta() {
+    if (ticketActual.length === 0) return mostrarMensaje('Agrega al menos un producto a la orden', true);
+    const total = ticketActual.reduce((acc, i) => acc + i.subtotal, 0);
+    const res = await fetch('api/ventas/procesar', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ montoTotal: total, detalles: ticketActual })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    if (res.ok) {
+        ticketActual = [];
+        document.getElementById('ventaCant').value = '';
+        actualizarVistaTicket();
+        cargarTodo();
+    }
+}
+
+function renderVentas() { filtrarTablaVentas(); }
+
+function filtrarTablaVentas() {
+    const q = document.getElementById('filtroTexto').value.toLowerCase();
+    const f = document.getElementById('filtroFecha').value;
+    const tbody = document.getElementById('tablaVentasBody');
+    tbody.innerHTML = '';
+    (datosGlobales.ventas || []).filter(v => {
+        const coincideTexto = !q || v.idVenta.toString().includes(q) || v.resumenProductos.toLowerCase().includes(q);
+        const coincideFecha = !f || (v.fechaHora && v.fechaHora.startsWith(f));
+        return coincideTexto && coincideFecha;
+    }).forEach(v => {
+        tbody.innerHTML += `<tr>
+            <td>#${v.idVenta}</td>
+            <td>${v.fechaHora}</td>
+            <td>${v.resumenProductos}</td>
+            <td class="fw-bold text-warning">$${v.montoTotal.toFixed(2)}</td>
+            <td><button onclick="editarVentaPrompt(${v.idVenta}, ${v.montoTotal})" class="btn btn-dark btn-sm py-0">✏️</button></td>
+        </tr>`;
+    });
+}
+
+async function editarVentaPrompt(idVenta, montoActual) {
+    const nuevo = parseFloat(prompt('Corregir monto total de la Venta #' + idVenta + ':', montoActual));
+    if (isNaN(nuevo) || nuevo < 0) return mostrarMensaje('Monto inválido (no puede ser negativo)', true);
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'editarVenta', idVenta, nuevoMonto: nuevo })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    cargarTodo();
+}
+
+function renderFinanzas() {
+    const f = datosGlobales.finanzas || {};
+    const ingresos = f.ingresosTotales || 0;
+    const gastos = f.gastosTotales || 0;
+    const retiros = f.retirosTotales || 0;
+    const salidas = gastos + retiros;
+    const dif = f.diferenciaIngresosVsGastos !== undefined ? f.diferenciaIngresosVsGastos : (ingresos - salidas);
+    const porc = f.porcentajeGanancia || 0;
+
+    document.getElementById('finPresupuestoActual').innerText = (f.presupuestoActual || 0).toFixed(2);
+    document.getElementById('finGastosVista').innerText = gastos.toFixed(2);
+    document.getElementById('corteVentasSem').innerText = ingresos.toFixed(2);
+    document.getElementById('corteGastosSem').innerText = gastos.toFixed(2);
+    document.getElementById('corteRetirosSem').innerText = retiros.toFixed(2);
+    document.getElementById('corteDiferencia').innerText = dif.toFixed(2);
+    document.getElementById('leyendaPorcentajeGanancia').innerText =
+        `TUS RESULTADOS INDICAN QUE EXISTE UNA GANANCIA DE ${porc}% (INGRESOS: $${ingresos.toFixed(2)} VS GASTADO TOTAL: $${salidas.toFixed(2)})`;
+}
+
+async function ajustarPresupuesto() {
+    const m = parseFloat(document.getElementById('inputBasePresupuesto').value);
+    if (isNaN(m) || m < 0) return mostrarMensaje('Ingresa un presupuesto base válido sin negativos', true);
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'ajustarPresupuesto', monto: m })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    if (res.ok) {
+        document.getElementById('inputBasePresupuesto').value = '';
+        cargarTodo();
+    }
+}
+
+async function registrarGastoConLote() {
+    const idProducto = parseInt(document.getElementById('gastoProd').value);
+    const cantidad = parseFloat(document.getElementById('gastoCant').value);
+    const costoTotal = parseFloat(document.getElementById('gastoCosto').value);
+    const fechaCaducidad = document.getElementById('gastoCaducidad').value;
+    const concepto = document.getElementById('gastoConcepto').value.trim();
+
+    if (!cantidad || cantidad <= 0 || !costoTotal || costoTotal <= 0 || !fechaCaducidad || !concepto) {
+        return mostrarMensaje('Todos los campos son obligatorios y las cantidades deben ser mayores a 0.', true);
+    }
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'gastoLote', idProducto, cantidad, costoTotal, fechaCaducidad, concepto })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    if (res.ok) {
+        document.getElementById('gastoCant').value = '';
+        document.getElementById('gastoCosto').value = '';
+        document.getElementById('gastoCaducidad').value = '';
+        document.getElementById('gastoConcepto').value = '';
+        cargarTodo();
+    }
+}
+
+async function ejecutarRetiroCaja() {
+    const monto = parseFloat(document.getElementById('retiroCajaMonto').value);
+    const motivo = document.getElementById('retiroCajaMotivo').value;
+    if (isNaN(monto) || monto <= 0) return mostrarMensaje('Ingresa un monto válido a retirar de la caja.', true);
+
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'retiroCaja', monto, motivo })
+    });
+    const d = await res.json();
+    mostrarMensaje(d.mensaje || d.error, !res.ok);
+    if (res.ok) {
+        document.getElementById('retiroCajaMonto').value = '';
+        cargarTodo();
+    }
+}
+
+async function ejecutarCorteXZ() {
+    const ef = parseFloat(document.getElementById('efectivoCajaInput').value);
+    if (isNaN(ef) || ef < 0) return mostrarMensaje('Declara una cantidad de efectivo válida (>= 0)', true);
+    const res = await fetch('api/sistema', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ accion: 'corteCaja', efectivoDeclarado: ef })
+    });
+    const d = await res.json();
+    document.getElementById('efectivoCajaInput').value = '';
+
+    const desc = d.descuadre || 0;
+    const estado = desc === 0 ? '✅ CAJA CUADRADA' : (desc < 0 ? '❌ FALTANTE EN CAJA' : '⚠️ SOBRANTE EN CAJA');
+    document.getElementById('resultadoCorteBox').innerHTML = `
+        <div class="p-3 rounded-4 mt-2" style="background:#1d1d1d; border:2px solid #fff;">
+            <h5 class="fw-bold text-warning mb-2">${estado}</h5>
+            <p class="mb-1">Ingresos por Ventas: <b>+$${(d.ingresosTotales || 0).toFixed(2)}</b> vs Gastado en Lotes: <b>-$${(d.gastosTotales || 0).toFixed(2)}</b></p>
+            <p class="mb-1">Retiros (Ganancias Dueño / Sueldos): <b>-$${(d.retirosTotales || 0).toFixed(2)}</b></p>
+            <p class="mb-1">Saldo Esperado en Caja: <b>$${(d.presupuestoActual || 0).toFixed(2)}</b> | Efectivo Físico Declarado: <b>$${ef.toFixed(2)}</b></p>
+            <h5 class="mb-0 mt-2 text-info">Balance / Descuadre Final: $${desc.toFixed(2)}</h5>
+        </div>`;
+    cargarTodo();
+}
+
+function renderReporte() {
+    const r = datosGlobales.reporte || {};
+    const f = datosGlobales.finanzas || {};
+    const tbody = document.getElementById('tablaReporteProd');
+    tbody.innerHTML = '';
+    (r.ventasPorProducto || []).forEach(p => {
+        tbody.innerHTML += `<tr><td>${p.producto}</td><td>${p.cantidad}</td><td>$${Number(p.total).toFixed(2)}</td></tr>`;
+    });
+    document.getElementById('repDiaMayor').innerText = r.diaMayorConsumo || 'Sin ventas';
+    const utilidad = (f.ingresosTotales || 0) - ((f.gastosTotales || 0) + (f.retirosTotales || 0));
+    document.getElementById('repUtilidad').innerText = '$' + utilidad.toFixed(2);
+    document.getElementById('repMerma').innerText = (r.mermaCaducada || 0) + ' unidades/Kg';
+    renderGraficaComparativa();
+}
+
+function renderGraficaComparativa() {
+    const canvas = document.getElementById('graficaVentasGastos');
+    if (!canvas) return;
+    const f = datosGlobales.finanzas || {};
+    const ventasTotales = f.ingresosTotales || 0;
+    const gastosTotales = (f.gastosTotales || 0) + (f.retirosTotales || 0);
+
+    if (instanciaGrafica) instanciaGrafica.destroy();
+
+    instanciaGrafica = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Balance de Ventas vs Gastos ($ MXN)'],
+            datasets: [
+                {
+                    label: 'Ventas / Ingresos (Verde)',
+                    data: [ventasTotales],
+                    backgroundColor: 'rgba(40, 167, 69, 0.9)',
+                    borderColor: '#1e7e34',
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    barPercentage: 0.55
+                },
+                {
+                    label: 'Gastos e Insumos + Retiros (Rojo)',
+                    data: [gastosTotales],
+                    backgroundColor: 'rgba(220, 53, 69, 0.9)',
+                    borderColor: '#bd2130',
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    barPercentage: 0.55
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#111', font: { weight: 'bold', size: 13 } } }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#111' } },
+                x: { ticks: { color: '#111', font: { weight: 'bold', size: 13 } } }
+            }
+        }
+    });
+}
+</script>
+</body>
+</html>
