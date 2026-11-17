@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/panel_cristal_rojo">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REFRESCOS E INVENTARIO"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-black"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tvAlertaRefrescos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚠️ CONSULTA EN TIEMPO REAL (SOLO LECTURA)"
+        android:textColor="#FFE082"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- RadioButtons vistos en el 2do Parcial para filtrar la consulta -->
+    <RadioGroup
+        android:id="@+id/rgFiltroInventario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <RadioButton
+            android:id="@+id/rbTodos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todos"
+            android:textColor="#FFFFFF"
+            android:buttonTint="#FFCC80"
+            android:checked="true"
+            android:layout_marginRight="12dp" />
+
+        <RadioButton
+            android:id="@+id/rbRefrescos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refrescos"
+            android:textColor="#FFFFFF"
+            android:buttonTint="#FFCC80"
+            android:layout_marginRight="12dp" />
+
+        <RadioButton
+            android:id="@+id/rbCarne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Carne / Insumos"
+            android:textColor="#FFFFFF"
+            android:buttonTint="#FFCC80" />
+    </RadioGroup>
+
+    <!-- ListView visto en el 2do Parcial -->
+    <ListView
+        android:id="@+id/lvInventario"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#44FFFFFF"
+        android:dividerHeight="1dp"
+        android:background="#22000000" />
+</LinearLayout>

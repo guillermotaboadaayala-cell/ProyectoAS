@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/fondo_rojo_alsazon">
+
+    <!-- Barra Superior Estilo Look & Feel: AL SASON y SALIR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp"
+        android:background="#55000000">
+
+        <TextView
+            android:id="@+id/tvTituloTop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="AL SASON  🏠"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black" />
+
+        <Button
+            android:id="@+id/btnSalir"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:text="SALIR"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:background="@drawable/boton_pildora_negro" />
+    </LinearLayout>
+
+    <!-- Botonera para cambiar de Fragment (Tema 3er Parcial) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="#33000000">
+
+        <Button
+            android:id="@+id/btnFragInventario"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:text="INVENTARIO"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="@drawable/boton_pildora_negro" />
+
+        <Button
+            android:id="@+id/btnFragVentas"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:text="VENTAS"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="@drawable/boton_pildora_negro" />
+
+        <Button
+            android:id="@+id/btnFragReportes"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:text="ESTADÍSTICAS"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="@drawable/boton_pildora_negro" />
+    </LinearLayout>
+
+    <!-- FrameLayout donde se cargan los Fragments -->
+    <FrameLayout
+        android:id="@+id/contenedorFragments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp" />
+</LinearLayout>
